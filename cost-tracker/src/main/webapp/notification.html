@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications</title>
+</head>
+<body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; background: linear-gradient(180deg, #a5f3fc, #d8b4fe); color: #fff; display: flex; flex-direction: column; align-items: center; min-height: 100vh;">
+    <h1 style="color: #fff; margin-bottom: 20px;">Notifications</h1>
+    <table style="width: 90%; max-width: 800px; background-color: rgba(255, 255, 255, 0.1); border-collapse: collapse; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);">
+        <thead>
+            <tr>
+                <th style="padding: 12px 15px; text-align: left; color: #fff; background-color: rgba(255, 255, 255, CostCalculator0.2);">Message</th>
+            </tr>
+        </thead>
+        <tbody id="notificationTableBody">
+            <!-- Data will be populated here -->
+        </tbody>
+    </table>
+    <div id="error" style="color: #ffdddd; margin-top: 20px; text-align: center;"></div>
+
+    <script>
+        fetch('/cost-tracker/notifications')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok: ' + response.status);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Notifications data:', data);
+                const tableBody = document.getElementById('notificationTableBody');
+                tableBody.innerHTML = '';
+                data.forEach((notification, index) => {
+                    const row = document.createElement('tr');
+                    row.style.backgroundColor = index % 2 === 0 ? 'rgba(255, 255, 255, 0.05)' : 'transparent';
+                    row.innerHTML = `
+                        <td style="padding: 12px 15px; text-align: left; color: #fff;">${notification.message || 'No message'}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            })
+            .catch(err => {
+                console.error('Error fetching notification data:', err);
+                document.getElementById('error').textContent = 'Failed to load notifications';
+            });
+    </script>
+</body>
+</html>
